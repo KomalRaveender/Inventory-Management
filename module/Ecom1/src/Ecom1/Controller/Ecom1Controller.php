@@ -34,10 +34,6 @@ class Ecom1Controller extends AbstractActionController
                  $order = new Order();
                  $order->customer_id = $customer_id;
                     $this->getOrderTable()->saveOrder($order);
-                //    $max_oid = $this->getOrderTable()->getMaxOrderid();
-                   
-                //    die();
-                 // Redirect to list of albums
                  return $this->redirect()->toRoute('ecom1');
              }
          }
@@ -90,13 +86,20 @@ class Ecom1Controller extends AbstractActionController
 
       protected $ProductTable;
 
-      public function getProductTable()
-       {
-           if (!$this->ProductTable) {
-               $sm = $this->getServiceLocator();
-               $this->ProductTable = $sm->get('Ecom1\Model\ProductTable');
-           }
-           return $this->ProductTable;
-       }
+      public function getProductAction()
+{
+    $form = new ProductForm();
+    $request = $this->getRequest();
+    $productName = '';
+    $productPrice = '';
+    if ($request->isPost()) {
+        $productid = (int) $request->getPost('product_id');
+        $product = $this->getProductTable()->getProduct($productid);
+        $productName = $product->product_name;
+        $productPrice = $product->product_price;
+    }
+    return array('form' => $form, 'productName' => $productName, 'productPrice' => $productPrice);
+}
+
 }
 ?>
