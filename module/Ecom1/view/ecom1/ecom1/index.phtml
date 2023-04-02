@@ -1,0 +1,71 @@
+<?php
+use Ecom1\Form\CustomerForm;
+use Ecom1\Form\ProductForm;
+use Zend\Form\Element;
+use Zend\Form\View\Helper\FormRow;
+
+ $title = 'Order Entry';
+ $this->headTitle($title);
+ ?>
+ <h1><?php echo $this->escapeHtml($title); ?></h1>
+<?php
+ $form = new CustomerForm();
+ $form->setAttribute('action', $this->url('ecom1', array('action' => 'addcustomer')));
+ $form->prepare();
+
+ echo $this->form()->openTag($form);
+
+ echo $this->formRow($form->get('customer_name'));
+ echo $this->formRow($form->get('mobile'));
+ echo $this->formSubmit($form->get('submit'));
+ echo $this->form()->closeTag();
+?>
+
+ <?php
+ $form = new ProductForm();
+ $form->setAttribute('action', $this->url('ecom1', array('action' => 'getProductData')));
+ $form->prepare();
+
+ echo $this->form()->openTag($form);
+
+
+ echo $this->formRow($form->get('product_id'));
+ echo $this->formSubmit($form->get('submit'), array('id' => 'getProductDataBtn'));
+ echo $this->form()->closeTag();
+ 
+ // add script to send an ajax request to getProductData action
+ $this->inlineScript()->captureStart();
+ ?>
+
+ <table>
+    <tr>
+        <th>Product name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Amount</th>
+    </tr>
+ </table>
+ <script type="text/javascript">
+     $(document).ready(function() {
+         $('form[name="productForm"]').submit(function(e) {
+             e.preventDefault();
+             var productId = $('form[name="productForm"] input[name="product_id"]').val();
+             $.ajax({
+                 url: '<?php echo $this->url('ecom1', ['action' => 'getProductData']); ?>',
+                 type: 'POST',
+                 data: {product_id: productId},
+                 success: function(data) {
+                     var productData = JSON.parse(data);
+                     if (productData) {
+                         $('form[name="productForm"] input[name="product_name"]').val(productData.product_name);
+                         $('form[name="productForm"] input[name="product_price"]').val(productData.product_price);
+                     }
+                 }
+             });
+         });
+     });
+ </script>
+ <?php
+ $this->inlineScript()->captureEnd();
+
+ 
