@@ -8,11 +8,11 @@ class ProductForm extends Form
 {
     public function __construct($name = null)
     {
-        // we want to ignore the name passed
-        parent::__construct('customer');
+        parent::__construct('product');
 
         $this->add(array(
             'name' => 'product_id',
+            'type' => 'Text',
             'options' => array(
                 'label' => 'Product Id '
             )
@@ -28,7 +28,7 @@ class ProductForm extends Form
             'name' => 'product_price',
             'type' => 'Text',
             'options' => array(
-                'label' => 'Product Name',
+                'label' => 'Product Price',
             ),
         ));
         $this->add(array(

@@ -7,7 +7,8 @@ use Zend\Form\View\Helper\FormRow;
  $title = 'Order Entry';
  $this->headTitle($title);
  ?>
- <h1><?php echo $this->escapeHtml($title); ?></h1>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
 <?php
  $form = new CustomerForm();
  $form->setAttribute('action', $this->url('ecom1', array('action' => 'addcustomer')));
@@ -19,18 +20,23 @@ use Zend\Form\View\Helper\FormRow;
  echo $this->formRow($form->get('mobile'));
  echo $this->formSubmit($form->get('submit'));
  echo $this->form()->closeTag();
-?>
+?><hr>
 
-<?php
-$form = $this->form;
-$productName = $this->productName;
-$productPrice = $this->productPrice;
-echo $this->form()->openTag($form);
-echo $this->formRow($form->get('product_id'));
-echo $this->formSubmit($form->get('submit'));
-echo $this->form()->closeTag();
-if (!empty($productName) && !empty($productPrice)) {
-    echo "<p>Product Name: $productName</p>";
-    echo "<p>Product Price: $productPrice</p>";
-}
-?>
+<!DOCTYPE html>
+<html>
+    <head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" 
+            integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+            crossorigin="anonymous">
+    </script>
+    </head>
+    <body>
+        <form id="myForm" action="addproduct" method="post">
+            <label for="pid">Product Code:</label>
+            <input type="text" id = "pid" name = "pid">
+
+            <input type="submit" value="Submit" id="submitBtn"><hr>
+        </form>
+        
+    </body>    
+</html>

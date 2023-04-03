@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 use Ecom1\Model\Customer;         
 use Ecom1\Form\CustomerForm;
 use Ecom1\Model\Order;
+use Ecom1\Form\ProductForm;
 
 class Ecom1Controller extends AbstractActionController
 {
@@ -14,7 +15,6 @@ class Ecom1Controller extends AbstractActionController
     {
         return new ViewModel(array(
             'customers' => $this->getCustomerTable()->fetchAll(),
-            'Product' => $this->getProductTable()->fetchAll(),
         ));
     }
 
@@ -56,7 +56,7 @@ class Ecom1Controller extends AbstractActionController
                  $this->getAlbumTable()->saveAlbum($album);
 
                  // Redirect to list of albums
-                 return $this->redirect()->toRoute('album');
+                 return $this->redirect()->toRoute('ecom1');
              }
          }
          return array('form' => $form);
@@ -83,23 +83,37 @@ class Ecom1Controller extends AbstractActionController
           }
           return $this->OrderTable;
       }
-
-      protected $ProductTable;
-
-      public function getProductAction()
-{
-    $form = new ProductForm();
-    $request = $this->getRequest();
-    $productName = '';
-    $productPrice = '';
-    if ($request->isPost()) {
-        $productid = (int) $request->getPost('product_id');
-        $product = $this->getProductTable()->getProduct($productid);
-        $productName = $product->product_name;
-        $productPrice = $product->product_price;
     }
-    return array('form' => $form, 'productName' => $productName, 'productPrice' => $productPrice);
+
+    class ProductController extends AbstractActionController
+    {
+        protected $ProductTable;
+    
+        public function getProductAction()
+        {
+            $form = new ProductForm();
+            $request = $this->getRequest();
+            $productName = '';
+            $productPrice = '';
+            if ($request->isPost()) {
+                $productid = (int) $request->getPost('product_id');
+                $product = $this->getProductTable()->getProduct($productid);
+                $productName = $product->product_name;
+                $productPrice = $product->product_price;
+            }
+            return array('form' => $form, 'productName' => $productName, 'productPrice' => $productPrice);
+        }
+    
+    public function getProductTable()
+    {
+        if (!$this->ProductTable) {
+            $sm = $this->getServiceLocator();
+            $this->ProductTable = $sm->get('Ecom1\Model\ProductTable');
+        }
+        return $this->ProductTable;
+    }
 }
 
-}
-?>
+
+
+    ?>
