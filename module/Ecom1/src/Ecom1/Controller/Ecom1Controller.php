@@ -47,6 +47,28 @@ class Ecom1Controller extends AbstractActionController
 
          $request = $this->getRequest();
          if ($request->isPost()) {
+             $product = new Product();
+             $form->setInputFilter($product->getInputFilter());
+             $form->setData($request->getPost());
+
+             if ($form->isValid()) {
+                 $product->exchangeArray($form->getData());
+                 $this->getAlbumTable()->saveEcom1($product);
+
+                 // Redirect to list of product
+                 return $this->redirect()->toRoute('ecom1');
+             }
+         }
+         return array('form' => $form);
+     }
+
+     public function getproductAction()
+     {
+         $form = new ProductForm();
+         $form->get('submit')->setValue('Add');
+
+         $request = $this->getRequest();
+         if ($request->isPost()) {
              $album = new Product();
              $form->setInputFilter($album->getInputFilter());
              $form->setData($request->getPost());
@@ -83,27 +105,8 @@ class Ecom1Controller extends AbstractActionController
           }
           return $this->OrderTable;
       }
-    }
-
-    class ProductController extends AbstractActionController
-    {
-        protected $ProductTable;
     
-        public function getProductAction()
-        {
-            $form = new ProductForm();
-            $request = $this->getRequest();
-            $productName = '';
-            $productPrice = '';
-            if ($request->isPost()) {
-                $productid = (int) $request->getPost('product_id');
-                $product = $this->getProductTable()->getProduct($productid);
-                $productName = $product->product_name;
-                $productPrice = $product->product_price;
-            }
-            return array('form' => $form, 'productName' => $productName, 'productPrice' => $productPrice);
-        }
-    
+    protected $getProductTable;
     public function getProductTable()
     {
         if (!$this->ProductTable) {
@@ -113,7 +116,4 @@ class Ecom1Controller extends AbstractActionController
         return $this->ProductTable;
     }
 }
-
-
-
-    ?>
+?>

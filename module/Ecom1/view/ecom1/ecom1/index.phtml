@@ -1,8 +1,5 @@
 <?php
 use Ecom1\Form\CustomerForm;
-use Ecom1\Form\ProductForm;
-use Zend\Form\Element;
-use Zend\Form\View\Helper\FormRow;
 
  $title = 'Order Entry';
  $this->headTitle($title);
@@ -31,74 +28,74 @@ use Zend\Form\View\Helper\FormRow;
     </script>
     </head>
     <body>
-        <form id="myForm" action="addproduct" method="post">
-            <label for="pid">Product Code:</label>
+    <form id="myForm" action="<?php echo $this->url('ecom1', array('action' => 'getProduct')); ?>" method="post">
+            <label for="pid">Product Id:</label>
             <input type="text" id = "pid" name = "pid">
 
             <input type="submit" value="Submit" id="submitBtn"><hr>
         </form>
         <!-- JavaScript code to handle the form submission and create the textboxes with labels -->
-<script>
-  // Get the form and submit button elements
-  const form = document.getElementById("myForm");
-  const submitBtn = document.getElementById("submitBtn");
+        <script>
+            // Get the form and submit button elements
+            const form = document.getElementById("myForm");
+            const submitBtn = document.getElementById("submitBtn");
 
- // Add an event listener to the submit button
-submitBtn.addEventListener("click", function(event) {
-    // Prevent the default form submission
-    event.preventDefault();
+            // Add an event listener to the submit button
+            submitBtn.addEventListener("click", function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
 
-    // Create a div to hold the labels and textboxes
-    const row = document.createElement("div");
+            // Create a div to hold the labels and textboxes
+            const row = document.createElement("div");
 
-    // Create the labels and textboxes
-    const labels = ["Product Name", "Price", "Quantity", "Amount"];
-    for (let i = 0; i < 4; i++) {
-        const label = document.createElement("label");
-        label.textContent = labels[i] + ": ";
-        const textbox = document.createElement("input");
-        textbox.type = "text";
-        textbox.id = "textbox" + (i + 1);
-        textbox.name = "textbox" + (i + 1);
-        if (i === 2) {
-            textbox.type = "number";
-            textbox.min = "1"; // Set the minimum value to 1
-            textbox.max = "10"; // Set the maximum value to 10
-        }
-        row.appendChild(label);
-        row.appendChild(textbox);
-    }
+            // Create the labels and textboxes
+            const labels = ["Product Name", "Price", "Quantity", "Amount"];
+            for (let i = 0; i < 4; i++) {
+                const label = document.createElement("label");
+                label.textContent = labels[i] + ": ";
+                const textbox = document.createElement("input");
+                textbox.type = "text";
+                textbox.id = "textbox" + (i + 1);
+                textbox.name = "textbox" + (i + 1);
+                if (i === 2) {
+                    textbox.type = "number";
+                    textbox.min = "1"; // Set the minimum value to 1
+                    textbox.max = "10"; // Set the maximum value to 10
+                }
+                row.appendChild(label);
+                row.appendChild(textbox);
+            }
 
-    // Create the remove button for this row
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.addEventListener("click", function() {
-        // Remove the labels and textboxes in this row
-        const labels = row.getElementsByTagName("label");
-        const textboxes = row.getElementsByTagName("input");
-        while (labels.length > 0 && textboxes.length > 0) {
-            row.removeChild(labels[0]);
-            row.removeChild(textboxes[0]);
-        }
-        // Remove the <br> tag for this row
-        const br = row.getElementsByTagName("br")[0];
-        if (br) {
-            row.removeChild(br);
-        }
-        // Remove the remove button for this row
-        row.removeChild(removeBtn);
-    });
+            // Create the remove button for this row
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "Remove";
+            removeBtn.addEventListener("click", function() {
+            // Remove the labels and textboxes in this row
+            const labels = row.getElementsByTagName("label");
+            const textboxes = row.getElementsByTagName("input");
+            while (labels.length > 0 && textboxes.length > 0) {
+                row.removeChild(labels[0]);
+                row.removeChild(textboxes[0]);
+            }
+            // Remove the <br> tag for this row
+            const br = row.getElementsByTagName("br")[0];
+            if (br) {
+                row.removeChild(br);
+            }
+            // Remove the remove button for this row
+            row.removeChild(removeBtn);
+            });
 
-    // Add the remove button to this row
-    row.appendChild(removeBtn);
+                // Add the remove button to this row
+                row.appendChild(removeBtn);
 
-    // Add a line break after this row
-    row.appendChild(document.createElement("br"));
+                // Add a line break after this row
+                row.appendChild(document.createElement("br"));
 
-    // Add the row to the form
-    form.appendChild(row);
-});
+                // Add the row to the form
+                form.appendChild(row);
+            });
 
-</script>
+        </script>
     </body>
 </html>
