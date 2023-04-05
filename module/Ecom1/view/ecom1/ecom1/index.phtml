@@ -1,5 +1,8 @@
 <?php
 use Ecom1\Form\CustomerForm;
+use Ecom1\Form\ProductForm;
+use Zend\Form\Element;
+use Zend\Form\View\Helper\FormRow;
 
  $title = 'Order Entry';
  $this->headTitle($title);
@@ -28,8 +31,8 @@ use Ecom1\Form\CustomerForm;
     </script>
     </head>
     <body>
-    <form id="myForm" action="<?php echo $this->url('ecom1', array('action' => 'getProduct')); ?>" method="post">
-            <label for="pid">Product Id:</label>
+        <form id="myForm" action="/ecom1/getProduct" method="post">
+            <label for="pid">Product Code:</label>
             <input type="text" id = "pid" name = "pid">
 
             <input type="submit" value="Submit" id="submitBtn"><hr>

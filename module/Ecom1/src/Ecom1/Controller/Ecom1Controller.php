@@ -53,7 +53,7 @@ class Ecom1Controller extends AbstractActionController
 
              if ($form->isValid()) {
                  $product->exchangeArray($form->getData());
-                 $this->getAlbumTable()->saveEcom1($product);
+                 $this->getProductTable()->saveProduct($product);
 
                  // Redirect to list of product
                  return $this->redirect()->toRoute('ecom1');
@@ -61,28 +61,7 @@ class Ecom1Controller extends AbstractActionController
          }
          return array('form' => $form);
      }
-
-     public function getproductAction()
-     {
-         $form = new ProductForm();
-         $form->get('submit')->setValue('Add');
-
-         $request = $this->getRequest();
-         if ($request->isPost()) {
-             $album = new Product();
-             $form->setInputFilter($album->getInputFilter());
-             $form->setData($request->getPost());
-
-             if ($form->isValid()) {
-                 $album->exchangeArray($form->getData());
-                 $this->getAlbumTable()->saveAlbum($album);
-
-                 // Redirect to list of albums
-                 return $this->redirect()->toRoute('ecom1');
-             }
-         }
-         return array('form' => $form);
-     }
+     
 
     protected $CustomerTable;
 

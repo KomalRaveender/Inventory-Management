@@ -29,7 +29,7 @@ class ProductTable
         return $row;
     }
 
-    public function saveProduct(Producter $product)
+    public function saveProduct(Product $product)
     {
         $data = array(
             'product_name' => $product->product_name,
@@ -39,7 +39,7 @@ class ProductTable
         $product_id = (int) $product->product_id;
         if ($product_id == 0) {
             $this->tableGateway->insert($data);
-            $product_id = $this->tableGateway->getLastInsertValue();
+            //$product_id = $this->tableGateway->getLastInsertValue();
         } else {
             if ($this->getProduct($product_id)) {
                 $this->tableGateway->update($data, array('product_id' => $product_id));
@@ -47,7 +47,6 @@ class ProductTable
                 throw new \Exception('Customer id does not exist');
             }
         }
-        return $product_id;
     }
 
     public function deleteProduct   ($id)

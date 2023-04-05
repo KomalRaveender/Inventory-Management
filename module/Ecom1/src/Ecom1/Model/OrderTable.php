@@ -44,16 +44,16 @@ class OrderTable
         return $row['max_order_id'];
     }
 
-    public function getProductData($id)
-{
-    $id = (int) $id;
-    $rowset = $this->tableGateway->select(array('id' => $id));
-    $row = $rowset->current();
-    if (!$row) {
-        throw new \Exception("Could not find row $id");
-    }
-    return array('name' => $row->name, 'price' => $row->price);
-}
+//     public function getProductData($id)
+// {
+//     $id = (int) $id;
+//     $rowset = $this->tableGateway->select(array('id' => $id));
+//     $row = $rowset->current();
+//     if (!$row) {
+//         throw new \Exception("Could not find row $id");
+//     }
+//     return array('name' => $row->name, 'price' => $row->price);
+// }
 
     public function saveOrder(Order $order)
     {
