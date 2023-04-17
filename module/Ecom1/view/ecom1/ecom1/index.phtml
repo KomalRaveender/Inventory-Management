@@ -1,104 +1,134 @@
-<?php
-use Ecom1\Form\CustomerForm;
-use Ecom1\Form\ProductForm;
-use Zend\Form\Element;
-use Zend\Form\View\Helper\FormRow;
-
- $title = 'Order Entry';
- $this->headTitle($title);
- ?>
-<h1><?php echo $this->escapeHtml($title); ?></h1>
-
-<?php
- $form = new CustomerForm();
- $form->setAttribute('action', $this->url('ecom1', array('action' => 'addcustomer')));
- $form->prepare();
-
- echo $this->form()->openTag($form);
-
- echo $this->formRow($form->get('customer_name'));
- echo $this->formRow($form->get('mobile'));
- echo $this->formSubmit($form->get('submit'));
- echo $this->form()->closeTag();
-?><hr>
-
-<!DOCTYPE html>
 <html>
-    <head>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" 
-            integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-            crossorigin="anonymous">
-    </script>
-    </head>
-    <body>
-        <form id="myForm" action="/ecom1/getProduct" method="post">
-            <label for="pid">Product Code:</label>
-            <input type="text" id = "pid" name = "pid">
 
-            <input type="submit" value="Submit" id="submitBtn"><hr>
-        </form>
-        <!-- JavaScript code to handle the form submission and create the textboxes with labels -->
-        <script>
-            // Get the form and submit button elements
-            const form = document.getElementById("myForm");
-            const submitBtn = document.getElementById("submitBtn");
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-            // Add an event listener to the submit button
-            submitBtn.addEventListener("click", function(event) {
-            // Prevent the default form submission
-            event.preventDefault();
+    <title>Product Order Form</title>
+</head>
 
-            // Create a div to hold the labels and textboxes
-            const row = document.createElement("div");
+<body>
+    <h2><b>Product Order Entry</b></h2>
+    <form action="/ecom1/ordernow" method="post">
+        <table>
+            <tr>
+                <td><b>Customer Name:</b></td>
+                <td><input type="text" name="customer_name" required></td>
+            </tr>
+            <tr>
+                <td><b>Mobile:</b></td>
+                <td><input type="text" name="mobile"></td>
+            </tr>
+        </table>
+        <hr>
+        <br>
+        <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+        <br><br>
+        <table id="product_table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Net Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+        <input type="submit" class="btn btn-success" value="Generate Invoice">
+    </form>
 
-            // Create the labels and textboxes
-            const labels = ["Product Name", "Price", "Quantity", "Amount"];
-            for (let i = 0; i < 4; i++) {
-                const label = document.createElement("label");
-                label.textContent = labels[i] + ": ";
-                const textbox = document.createElement("input");
-                textbox.type = "text";
-                textbox.id = "textbox" + (i + 1);
-                textbox.name = "textbox" + (i + 1);
-                if (i === 2) {
-                    textbox.type = "number";
-                    textbox.min = "1"; // Set the minimum value to 1
-                    textbox.max = "10"; // Set the maximum value to 10
+    <script>
+        function getProductDetails(idCell) {
+            var productId = idCell.getElementsByTagName("input")[0].value;
+            var row = idCell.parentNode;
+            var nameCell = row.getElementsByTagName("td")[1];
+            var priceCell = row.getElementsByTagName("td")[2];
+            var quantityCell = row.getElementsByTagName("td")[3];
+            var netPriceCell = row.getElementsByTagName("td")[4];
+
+            nameCell.innerHTML = "<input type='text' name='product_name[]' readonly>";
+            priceCell.innerHTML = "<input type='text' name='price[]' readonly>";
+            quantityCell.innerHTML = "<input type='number' name='quantity[]' min='1' required>";
+            netPriceCell.innerHTML = "<input type='text' name='net_price[]' readonly>";
+
+            var productName = nameCell.getElementsByTagName("input")[0];
+            var productPrice = priceCell.getElementsByTagName("input")[0];
+
+            $(productName).val("");
+            $(productPrice).val("");
+
+            $(productName).on('change', function () {
+                var id = $(this).val();
+                getProductPrice(id, productPrice);
+            });
+
+            getProductPrice(productId, productPrice, productName);
+        }
+
+        function getProductPrice(id, productPrice, productName) {
+            $.ajax({
+                type: "GET",
+                url: '/ecom1/fetch/' + id,
+                dataType: "json",
+                success: function (response) {
+
+                    $(productPrice).val(response.product_price);
+                    $(productName).val(response.product_name);
+                    $(netAmount).val(response.net_price);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
                 }
-                row.appendChild(label);
-                row.appendChild(textbox);
-            }
-
-            // Create the remove button for this row
-            const removeBtn = document.createElement("button");
-            removeBtn.textContent = "Remove";
-            removeBtn.addEventListener("click", function() {
-            // Remove the labels and textboxes in this row
-            const labels = row.getElementsByTagName("label");
-            const textboxes = row.getElementsByTagName("input");
-            while (labels.length > 0 && textboxes.length > 0) {
-                row.removeChild(labels[0]);
-                row.removeChild(textboxes[0]);
-            }
-            // Remove the <br> tag for this row
-            const br = row.getElementsByTagName("br")[0];
-            if (br) {
-                row.removeChild(br);
-            }
-            // Remove the remove button for this row
-            row.removeChild(removeBtn);
+            });
+            $(document).on('change', 'input[name="quantity[]"]', function () {
+                var row = $(this).closest('tr');
+                var price = parseFloat(row.find('input[name="price[]"]').val());
+                var quantity = parseInt($(this).val());
+                var netPrice = price * quantity;
+                row.find('input[name="net_price[]"]').val(netPrice.toFixed(2));
             });
 
-                // Add the remove button to this row
-                row.appendChild(removeBtn);
+        }
 
-                // Add a line break after this row
-                row.appendChild(document.createElement("br"));
+        function addProduct() {
+            var table = document.getElementById("product_table").getElementsByTagName("tbody")[0];
+            var row = table.insertRow();
+            var idCell = row.insertCell(0);
+            var idInput = document.createElement("input");
+            idInput.type = "text";
+            idInput.name = "product_id[]";
+            idInput.required = true;
+            idCell.appendChild(idInput);
+            var getDetailsButton = document.createElement("button");
+            getDetailsButton.type = "button";
+            getDetailsButton.innerHTML = "Get Details";
+            getDetailsButton.className = "btn btn-success btn-sm";
+            getDetailsButton.onclick = function () { getProductDetails(idCell) };
+            idCell.appendChild(getDetailsButton);
+            var nameCell = row.insertCell(1);
+            nameCell.innerHTML = "-";
+            var priceCell = row.insertCell(2);
+            priceCell.innerHTML = "-";
+            var quantityCell = row.insertCell(3);
+            quantityCell.innerHTML = "-";
+            var netPriceCell = row.insertCell(4);
+            netPriceCell.innerHTML = "-";
+            var removeCell = row.insertCell(5);
+            var removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "btn btn-danger btn-sm remove-row";
+            removeButton.innerHTML = "Remove";
+            removeCell.appendChild(removeButton);
+        }
 
-                // Add the row to the form
-                form.appendChild(row);
-            });
+        $(document).on('click', '.remove-row', function () {
+            $(this).closest('tr').remove();
+        });
 
-        </script>
-    </body>
+    </script>
+</body>
+
 </html>

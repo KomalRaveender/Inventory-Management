@@ -12,8 +12,6 @@ class OrderTable
         $this->tableGateway = $tableGateway;
     }
 
-    
-
     public function fetchAll()
     {
         $resultSet = $this->tableGateway->select();
@@ -22,7 +20,7 @@ class OrderTable
 
     public function getOrder($id)
     {
-        $id  = (int) $id;
+        $id = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
         $row = $rowset->current();
         if (!$row) {
@@ -30,30 +28,6 @@ class OrderTable
         }
         return $row;
     }
-
-    public function getMaxOrderId()
-    {
-        $rowset = $this->tableGateway->select(function ($select) {
-            $select->columns(array('max_order_id' => new \Zend\Db\Sql\Expression('MAX(id)')));
-        });
-
-        $row = $rowset->current();
-        if (!$row) {
-            throw new \Exception("Could not get max order ID");
-        }   
-        return $row['max_order_id'];
-    }
-
-//     public function getProductData($id)
-// {
-//     $id = (int) $id;
-//     $rowset = $this->tableGateway->select(array('id' => $id));
-//     $row = $rowset->current();
-//     if (!$row) {
-//         throw new \Exception("Could not find row $id");
-//     }
-//     return array('name' => $row->name, 'price' => $row->price);
-// }
 
     public function saveOrder(Order $order)
     {
@@ -77,7 +51,5 @@ class OrderTable
     {
         $this->tableGateway->delete(array('id' => (int) $id));
     }
-
-    
 }
 ?>

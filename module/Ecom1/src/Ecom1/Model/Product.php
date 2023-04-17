@@ -14,9 +14,9 @@ class Product
         $this->product_price  = (!empty($data['product_price'])) ? $data['product_price'] : null;
     }
 
-    public function setInputFilter(InputFilterInterface $inputFilter)
-     {
-         throw new \Exception("Not used");
-     }
+    // public function setInputFilter(InputFilterInterface $inputFilter)
+    //  {
+    //      throw new \Exception("Not used");
+    //  }
 }
 ?>

@@ -18,40 +18,95 @@ class ProductTable
         return $resultSet;
     }
 
-    public function getProduct($id)
+    public function getProduct($product_id)
     {
-        $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id' => $id));
+        //$product_id  = (int) $product_id;
+        $rowset = $this->tableGateway->select(array('product_id' => $product_id));
         $row = $rowset->current();
         if (!$row) {
-            throw new \Exception("Could not find row $id");
+            throw new \Exception("Could not find row $product_id");
         }
-        return $row;
+
+        return [
+            'product_name' => $row->product_name,
+            'product_price' => $row->product_price
+        ];
     }
 
-    public function saveProduct(Product $product)
+    public function storeOrder($formData)
     {
-        $data = array(
-            'product_name' => $product->product_name,
-            'product_price'  => $product->product_price,
+        $customerData = array(
+            'customer_name' => $formData['customer_name'],
+            'mobile' => $formData['mobile'],
         );
 
-        $product_id = (int) $product->product_id;
-        if ($product_id == 0) {
-            $this->tableGateway->insert($data);
-            //$product_id = $this->tableGateway->getLastInsertValue();
-        } else {
-            if ($this->getProduct($product_id)) {
-                $this->tableGateway->update($data, array('product_id' => $product_id));
-            } else {
-                throw new \Exception('Customer id does not exist');
-            }
-        }
-    }
+        $customertable = new TableGateway('customer', $this->tableGateway->getAdapter());
 
-    public function deleteProduct   ($id)
-    {
-        $this->tableGateway->delete(array('id' => (int) $id));
+
+        $customertable->insert($customerData);
+        $custId = $customertable->getLastInsertValue();
+
+        $totalprice = 0;
+
+        foreach ($formData['price'] as $netprice) {
+            $totalprice += (float) $netprice;
+        }
+
+        $orderDate = date("Y-m-d");
+
+        $orderData = array(
+            'customer_id' => $custId,
+            'order_date' => $orderDate,
+            'total_amount' => $totalprice,
+        );
+
+
+        $ordertable = new TableGateway('orders', $this->tableGateway->getAdapter());
+
+
+        $ordertable->insert($orderData);
+        $orderId = $ordertable->getLastInsertValue();
+
+
+        $productNames = array();
+
+        for ($i = 0; $i < count($formData['product_id']); $i++) {
+            $productId = $formData['product_id'][$i];
+            $productName = $formData['product_name'][$i];
+            $productQuantity = $formData['quantity'][$i];
+            $productPrice = $formData['price'][$i];
+
+            $productNames[] = array(
+                'product_name' => $productName,
+                'price' => $productPrice,
+                'quantity' => $productQuantity,
+                'prod_price' => $productPrice * $productQuantity,
+            );
+
+            $data1 = array();
+            $orderDetailsData = array(
+                'order_id' => $orderId,
+                'product_id' => $productId,
+                'quantity' => $productQuantity,
+                'product_price' => $productQuantity * $productPrice,
+
+            );
+
+            $data1[] = $orderDetailsData;
+
+            $orderDetailsTable = new TableGateway('order_details', $this->tableGateway->getAdapter());
+            $orderDetailsTable->insert($orderDetailsData);
+        }
+
+        $data123 = array(
+            'order_id' => $orderId,
+            'product_id' => $productId,
+            'orderData' => $orderData,
+            'orderDetails' => $data1,
+            'productNames' => $productNames,
+        );
+
+        return $data123;
     }
 }
 ?>

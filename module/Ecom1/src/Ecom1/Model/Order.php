@@ -16,9 +16,9 @@ class Order
         $this->total_amount  = (!empty($data['total_amount'])) ? $data['total_amount'] : null;
     }
 
-    public function setInputFilter(InputFilterInterface $inputFilter)
-     {
-         throw new \Exception("Not used");
-     }
+    // public function setInputFilter(InputFilterInterface $inputFilter)
+    //  {
+    //      throw new \Exception("Not used");
+    //  }
 }
 ?>

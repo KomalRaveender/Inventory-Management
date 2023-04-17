@@ -14,9 +14,9 @@ class Customer
         $this->mobile  = (!empty($data['mobile'])) ? $data['mobile'] : null;
     }
 
-    public function setInputFilter(InputFilterInterface $inputFilter)
-     {
-         throw new \Exception("Not used");
-     }
+    // public function setInputFilter(InputFilterInterface $inputFilter)
+    //  {
+    //      throw new \Exception("Not used");
+    //  }
 }
 ?>

@@ -1,0 +1,147 @@
+<?php
+// echo("<pre>");
+// print_r($cust_details);
+// echo("</pre>");
+// die();
+?>
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 80%;
+            margin-top: 200px;
+            margin-left: auto;
+            margin-bottom: auto;
+            margin-right: auto;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            width: 940px;
+        }
+
+        table {
+            width: 80%;
+        }
+
+        table th,
+        table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #eee;
+        }
+
+        .invoice-details {
+            margin-top: 20px;
+            display: flex;
+            /* justify-content: space-between; */
+        }
+
+        .customer-details,
+        .store-details {
+            width: 40%;
+        }
+
+        .customer-details h3,
+        .store-details h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .customer-details p,
+        .store-details p {
+            font-size: 16px;
+            margin: 0;
+            /* position: center;
+            top: 0;
+            right: 0;
+            font-size: 16px;
+            margin: 10px; */
+        }
+        .date
+        {
+            text-align: right;
+            position: right;
+            width: 30%;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <span>
+        <h1>Invoice</h1>
+    </span>
+    <div class="invoice-details">
+        <div class="customer-details">
+            <h3>Customer Details</h3>
+            <p>
+                <?php echo ($cust_details->customer_name); ?>
+            </p>
+            <p>
+                <?php echo ($cust_details->mobile); ?>
+            </p>
+        </div>
+         <div class="date">
+        <p>Date: <?php echo date("d-m-Y"); ?></p>
+    </div>
+        <!-- <div class="store-details">
+            <h3>Store Details</h3>
+        </div> -->
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Net Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $sum = 0;
+            foreach ($result['productNames'] as $row) { ?>
+                <tr>
+                    <td>
+                        <?php echo $row['product_name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $row['price']; ?>
+                    </td>
+                    <td>
+                        <?php echo $row['quantity']; ?>
+                    </td>
+                    <td>
+                        <?php echo $row['prod_price']; ?>
+                    </td>
+                </tr>
+                <?php
+                $sum = $sum + $row['prod_price'];
+            } ?>
+
+            <tr>
+                <td colspan="3" style="text-align: right;">Total</td>
+                <td>
+                    <?php echo ($sum); ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

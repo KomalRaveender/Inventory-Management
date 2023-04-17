@@ -18,13 +18,13 @@ class CustomerTable
         return $resultSet;
     }
 
-    public function getCustomer($id)
+    public function getCustomer($customer_id)
     {
-        $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id' => $id));
+        $customer_id  = (int) $customer_id;
+        $rowset = $this->tableGateway->select(array('customer_id' => $customer_id));
         $row = $rowset->current();
         if (!$row) {
-            throw new \Exception("Could not find row $id");
+            throw new \Exception("Could not find row $customer_id");
         }
         return $row;
     }
@@ -48,6 +48,14 @@ class CustomerTable
             }
         }
         return $customer_id;
+    }
+
+    public function addCustomer($customer_name, $mobile)
+    {
+        $this->tableGateway->insert([
+            'customer_name' => $customer_name,
+            'mobile' => $mobile,
+        ]);
     }
 
     public function deleteCustomer($id)
